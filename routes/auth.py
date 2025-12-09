@@ -20,14 +20,12 @@ def register():
         # 建立新帳號
         user = User(username=username)
         user.set_password(password)
-
         db.session.add(user)
         db.session.commit()
 
         return redirect("/login")
 
     return render_template("register.html")
-
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
@@ -43,7 +41,7 @@ def login():
             return render_template("login.html", error=error)
 
         login_user(user)
-        return redirect("/")
+        return redirect("/home")    #修正！登入成功轉到文章首頁
 
     return render_template("login.html")
 
@@ -52,4 +50,4 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect("/")
+    return redirect("/login")       #登出後回登入頁

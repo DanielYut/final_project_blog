@@ -10,15 +10,13 @@
     <nav class="navbar">
         <div class="logo">CampusHub</div>
         <ul>
-            <li><a href="/">首頁</a></li>
+
+            <li><a href="/home">首頁</a></li>
 
             {% if current_user.is_authenticated %}
-                <!-- 已登入 -->
                 <li><a href="/posts/create">新增文章</a></li>
                 <li><a href="/logout">登出（{{ current_user.username }}）</a></li>
-
             {% else %}
-                <!-- 未登入 -->
                 <li><a href="/login">登入</a></li>
                 <li><a href="/register">註冊</a></li>
             {% endif %}
@@ -32,16 +30,15 @@
     <section class="content">
         <h2>最新文章</h2>
 
-        <!-- 🔥 Infinite Scroll 文章容器（由 JS 自動載入） -->
+        <!-- 無限滾動文章容器 -->
         <div id="post-container"></div>
 
-        <!-- 載入中提示 -->
-        <div id="loading" style="text-align:center; margin:20px; display:none;">
+        <!-- 載入提示 -->
+        <div id="loading" style="display:none; text-align:center; margin-top:20px;">
             載入中...
         </div>
     </section>
 
-    <!-- 載入 Infinite Scroll JS -->
     <script src="/static/infinite_scroll.js"></script>
 
 </body>

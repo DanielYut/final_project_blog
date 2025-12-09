@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
 from extensions import db, login_manager
 from faker import Faker
 import random, json, os
@@ -22,19 +22,36 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(posts_bp)
 
+    # -----------------------------
+    # ⭐ 1. 強制一開始顯示登入頁
+    # -----------------------------
     @app.route("/")
-    def index():
-        posts = Post.query.order_by(Post.created_at.desc()).limit(20).all()
-        return render_template("index.html", posts=posts)
+    def force_login():
+        return redirect("/login")
 
-    # ------------------------
+    # -----------------------------
+    # ⭐ 2. 訪客模式 → 直接進首頁
+    # -----------------------------
+    @app.route("/guest")
+    def guest_mode():
+        return redirect("/home")
+
+    # -----------------------------
+    # ⭐ 3. 真正首頁（顯示文章）
+    # -----------------------------
+    @app.route("/home")
+    def home():
+        return render_template("index.html")
+
+    # -----------------------------
     # 🔥 Database initialization
-    # ------------------------
+    # -----------------------------
     with app.app_context():
         db.create_all()
 
         fake = Faker("en_US")
 
+        # 生成假使用者
         if User.query.count() < 30:
             print("⚙ Generating 30 English users...")
             for _ in range(30):
@@ -49,10 +66,12 @@ def create_app():
 
         users = User.query.all()
 
+        # 讀取文章 JSON
         json_path = os.path.join(os.path.dirname(__file__), "data/english_articles.json")
         with open(json_path, "r", encoding="utf-8") as f:
             articles = json.load(f)
 
+        # 導入假文章
         if Post.query.count() == 0:
             print("⚙ Importing 50 paired articles...")
 
@@ -69,6 +88,7 @@ def create_app():
             print("✔ Successfully imported paired articles!")
 
     return app
+
 
 app = create_app()
 

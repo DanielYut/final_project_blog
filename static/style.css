@@ -72,3 +72,15 @@ body {
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
+.guest-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    background: #4caf50;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+.guest-btn:hover {
+    background: #43a047;
+}
