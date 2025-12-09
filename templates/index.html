@@ -10,9 +10,7 @@
     <nav class="navbar">
         <div class="logo">CampusHub</div>
         <ul>
-
             <li><a href="/">首頁</a></li>
-            
 
             {% if current_user.is_authenticated %}
                 <!-- 已登入 -->
@@ -24,7 +22,6 @@
                 <li><a href="/login">登入</a></li>
                 <li><a href="/register">註冊</a></li>
             {% endif %}
-
         </ul>
     </nav>
 
@@ -35,21 +32,17 @@
     <section class="content">
         <h2>最新文章</h2>
 
-        {% if posts %}
-            {% for p in posts %}
-                <div style="padding: 10px 0;">
-                    <a href="/posts/{{ p.id }}" style="font-size: 20px; color: #1877f2;">
-                        {{ p.title }}
-                    </a>
-                    <div style="font-size: 14px; color: gray;">
-                        {{ p.created_at.strftime("%Y-%m-%d %H:%M") }}
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>目前沒有文章。</p>
-        {% endif %}
+        <!-- 🔥 Infinite Scroll 文章容器（由 JS 自動載入） -->
+        <div id="post-container"></div>
+
+        <!-- 載入中提示 -->
+        <div id="loading" style="text-align:center; margin:20px; display:none;">
+            載入中...
+        </div>
     </section>
+
+    <!-- 載入 Infinite Scroll JS -->
+    <script src="/static/infinite_scroll.js"></script>
 
 </body>
 </html>

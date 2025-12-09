@@ -39,3 +39,26 @@ def create_post():
         return redirect("/")
 
     return render_template("post_create.html")
+
+@posts_bp.route("/api/posts")
+def api_posts():
+    page = int(request.args.get("page", 1))
+    per_page = 10  # 每次加載 10 篇
+
+    posts = Post.query.order_by(Post.created_at.desc())\
+        .paginate(page=page, per_page=per_page, error_out=False)
+
+    data = []
+    for p in posts.items:
+        data.append({
+            "id": p.id,
+            "title": p.title,
+            "content": p.content[:80] + "...",
+            "author": p.user.username,
+            "created_at": p.created_at.strftime("%Y-%m-%d %H:%M")
+        })
+
+    return {
+        "posts": data,
+        "has_next": posts.has_next
+    }
