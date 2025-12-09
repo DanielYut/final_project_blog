@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>新增文章 | CampusHub</title>
+    <style>
+        body {
+            background: #f0f2f5;
+            font-family: "Microsoft JhengHei";
+        }
+        .create-box {
+            max-width: 700px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 3px 12px rgba(0,0,0,0.15);
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background: #1877f2;
+            color: white;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="create-box">
+        <h2>新增文章</h2>
+
+        <form method="POST">
+            <input name="title" placeholder="文章標題" required>
+            <textarea name="content" rows="10" placeholder="內容..." required></textarea>
+            <button type="submit">發佈</button>
+        </form>
+    </div>
+</body>
+</html>

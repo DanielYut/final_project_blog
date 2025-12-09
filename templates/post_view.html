@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ post.title }} | CampusHub</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        .post-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+        }
+        .post-title {
+            font-size: 30px;
+            font-weight: bold;
+            color: #1877f2;
+        }
+        .post-meta {
+            color: gray;
+            margin-bottom: 20px;
+        }
+        .post-content {
+            font-size: 18px;
+            line-height: 1.7;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="post-container">
+        <div class="post-title">{{ post.title }}</div>
+        <div class="post-meta">
+            作者：{{ post.user.username }}｜ {{ post.created_at.strftime("%Y-%m-%d %H:%M") }}
+        </div>
+        <div class="post-content">
+            {{ post.content | safe }}
+        </div>
+    </div>
+
+</body>
+</html>

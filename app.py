@@ -11,17 +11,25 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
 
+    # 載入 Blueprint
     from routes.auth import auth_bp
-    app.register_blueprint(auth_bp)
+    from routes.posts import posts_bp  
 
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(posts_bp)   
+
+    # 首頁
     @app.route("/")
     def index():
-        return render_template("index.html")
+        from models.post import Post
+        posts = Post.query.order_by(Post.created_at.desc()).limit(5).all()
+        return render_template("index.html", posts=posts)
 
     with app.app_context():
         db.create_all()
 
     return app
+
 
 app = create_app()
 

@@ -11,6 +11,13 @@ def register():
         username = request.form["username"]
         password = request.form["password"]
 
+        # 檢查帳號是否已存在
+        existing = User.query.filter_by(username=username).first()
+        if existing:
+            error = "此帳號已被使用，請換一個帳號"
+            return render_template("register.html", error=error)
+
+        # 建立新帳號
         user = User(username=username)
         user.set_password(password)
 
@@ -22,6 +29,7 @@ def register():
     return render_template("register.html")
 
 
+
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -31,7 +39,8 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if not user or not user.check_password(password):
-            return "帳號或密碼錯誤"
+            error = "帳號或密碼錯誤"
+            return render_template("login.html", error=error)
 
         login_user(user)
         return redirect("/")

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>文章列表 | CampusHub</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        .post-list {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+        }
+        .post {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .post:last-child {
+            border-bottom: none;
+        }
+        .post-title {
+            font-size: 22px;
+            color: #1877f2;
+            text-decoration: none;
+        }
+        .post-meta {
+            font-size: 14px;
+            color: gray;
+        }
+        .new-post-btn {
+            display: inline-block;
+            margin-bottom: 15px;
+            background: #1877f2;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="post-list">
+        <a href="/posts/create" class="new-post-btn">＋ 新增文章</a>
+
+        {% for p in posts %}
+        <div class="post">
+            <a href="/posts/{{ p.id }}" class="post-title">{{ p.title }}</a>
+            <div class="post-meta">
+                作者：{{ p.user.username }} ｜ {{ p.created_at.strftime("%Y-%m-%d %H:%M") }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
