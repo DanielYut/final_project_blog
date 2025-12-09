@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>註冊 | CampusHub</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        body {
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: "Microsoft JhengHei", sans-serif;
+        }
+
+        .register-container {
+            background: white;
+            width: 380px;
+            padding: 32px 30px 38px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        .register-container h2 {
+            font-size: 26px;
+            margin-bottom: 25px;
+            color: #1877f2;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 10px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background: #1877f2;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        button:hover {
+            background: #166fe5;
+        }
+
+        .login-link {
+            margin-top: 12px;
+            display: block;
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="register-container">
+        <h2>建立新帳號</h2>
+
+        <form method="POST">
+            <input name="username" placeholder="帳號" required>
+            <input name="password" type="password" placeholder="密碼" required>
+            <button type="submit">註冊</button>
+        </form>
+
+        <a class="login-link" href="/login">已經有帳號？前往登入</a>
+    </div>
+
+</body>
+</html>
