@@ -6,22 +6,47 @@
     <link rel="stylesheet" href="/static/style.css">
 
     <style>
-        .post-container {
-            max-width: 900px;
-            margin: 40px auto;
+        .post-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .back-side-btn {
+            font-size: 18px;
+            color: #1a73e8;
+            text-decoration: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            height: fit-content;
+            margin-top: 40px;
+            transition: background 0.2s;
+        }
+
+        .back-side-btn:hover {
+            background: #e8f0fe;
+        }
+
+        .post-card {
+            width: 700px;
             background: white;
             padding: 25px 30px;
             border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
+
         .post-title {
             font-size: 30px;
             font-weight: bold;
             color: #1877f2;
         }
+
         .post-meta {
             color: gray;
             margin-bottom: 20px;
         }
+
         .post-content {
             font-size: 18px;
             line-height: 1.7;
@@ -31,14 +56,24 @@
 
 <body>
 
-    <div class="post-container">
-        <div class="post-title">{{ post.title }}</div>
-        <div class="post-meta">
-            作者：{{ post.user.username }}｜ {{ post.created_at.strftime("%Y-%m-%d %H:%M") }}
+    <div class="post-wrapper">
+
+        <!-- 左側返回鍵 -->
+        <a href="javascript:history.back()" class="back-side-btn">← 返回</a>
+
+        <!-- 單一文章卡片 -->
+        <div class="post-card">
+            <div class="post-title">{{ post.title }}</div>
+
+            <div class="post-meta">
+                作者：{{ post.user.username }}｜{{ post.created_at.strftime("%Y-%m-%d %H:%M") }}
+            </div>
+
+            <div class="post-content">
+                {{ post.content | safe }}
+            </div>
         </div>
-        <div class="post-content">
-            {{ post.content | safe }}
-        </div>
+
     </div>
 
 </body>
