@@ -167,9 +167,12 @@
                             : "";
 
                         div.innerHTML = `
-                            ${tagHTML}
+                            
                             <h2><a href="/posts/${p.id}" style="color:#5e35b1; text-decoration:none;">${p.title}</a></h2>
-                            <p style="font-size:14px; color:gray;">作者：${p.author}｜${p.created_at}</p>
+                            <p style="font-size:14px; color:gray;">
+                                作者：${p.author}｜${p.created_at}｜留言：${p.comment_count}
+                            </p>
+                            ${tagHTML}
                             <p style="margin-top:10px;">${p.content}</p>
                         `;
 
@@ -239,7 +242,9 @@
 
                     div.innerHTML = `
                         <h2><a href="/posts/${p.id}" style="color:#5e35b1; text-decoration:none;">${p.title}</a></h2>
-                        <p style="font-size:14px; color:gray;">作者：${p.author}｜${p.created_at}</p>
+                        <p style="font-size:14px; color:gray;">
+                            作者：${p.author}｜${p.created_at}｜留言：${p.comment_count}
+                        </p>
                         ${tagHTML}
                         <p style="margin-top:10px;">${p.content}</p>
                     `;

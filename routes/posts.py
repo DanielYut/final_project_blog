@@ -4,27 +4,29 @@ from models.post import Post
 from models.comment import Comment
 from extensions import db
 
-
 posts_bp = Blueprint("posts", __name__)
 
-# 📌 文章列表（不用動）
+# -------------------------------------------------
+# 文章列表頁
+# -------------------------------------------------
 @posts_bp.route("/posts")
 def list_posts():
     posts = Post.query.order_by(Post.created_at.desc()).all()
     return render_template("post_list.html", posts=posts)
 
 
-# 📌 單篇文章
-
+# -------------------------------------------------
+# 單篇文章（含留言功能）
+# -------------------------------------------------
 @posts_bp.route("/posts/<int:post_id>", methods=["GET", "POST"])
 def view_post(post_id):
     post = Post.query.get_or_404(post_id)
 
-    # 處理留言提交
+    # 新增留言
     if request.method == "POST":
         content = request.form["content"]
 
-        # 判斷登入狀態：登入 → 用帳號名；訪客 → 顯示 "訪客"
+        # 登入使用 username，否則顯示「訪客」
         author = current_user.username if current_user.is_authenticated else "訪客"
 
         new_comment = Comment(
@@ -41,7 +43,9 @@ def view_post(post_id):
     return render_template("post_view.html", post=post)
 
 
-# 📌 建立文章（需登入）
+# -------------------------------------------------
+# 建立文章（需登入）
+# -------------------------------------------------
 @posts_bp.route("/posts/create", methods=["GET", "POST"])
 @login_required
 def create_post():
@@ -65,7 +69,9 @@ def create_post():
     return render_template("post_create.html")
 
 
-# 📌 無限捲動文章 API（含 tag 過濾）
+# -------------------------------------------------
+# API：無限捲動文章（含分類過濾與留言數）
+# -------------------------------------------------
 @posts_bp.route("/api/posts")
 def api_posts():
     page = int(request.args.get("page", 1))
@@ -87,13 +93,16 @@ def api_posts():
             "content": p.content[:80] + "...",
             "author": p.user.username,
             "tag": p.tag,
-            "created_at": p.created_at.strftime("%Y-%m-%d %H:%M")
+            "created_at": p.created_at.strftime("%Y-%m-%d %H:%M"),
+            "comment_count": len(p.comments)
         })
 
     return {"posts": data, "has_next": posts.has_next}
 
 
-# 📌 單一分類頁（不用動）
+# -------------------------------------------------
+# 單一分類頁
+# -------------------------------------------------
 @posts_bp.route("/tag/<tag>")
 def posts_by_tag(tag):
     posts = Post.query.filter_by(tag=tag).order_by(Post.created_at.desc()).all()
@@ -101,7 +110,7 @@ def posts_by_tag(tag):
 
 
 # -----------------------------------------------------------
-# 🔍 新功能：搜尋 API（A+C 智慧搜尋：先標題 → 再內容）
+# API：搜尋功能（先搜尋標題，再搜尋內容）
 # -----------------------------------------------------------
 @posts_bp.route("/api/search")
 def api_search():
@@ -110,7 +119,7 @@ def api_search():
     if not keyword:
         return {"posts": []}
 
-    # 1️⃣ 優先搜尋標題（C）
+    # 先搜尋標題
     title_results = Post.query.filter(
         Post.title.ilike(f"%{keyword}%")
     ).order_by(Post.created_at.desc()).all()
@@ -118,12 +127,12 @@ def api_search():
     if len(title_results) > 0:
         posts = title_results
     else:
-        # 2️⃣ 標題找不到 → fallback 搜尋內容（A）
+        # 標題找不到 → fallback 搜尋內容
         posts = Post.query.filter(
             Post.content.ilike(f"%{keyword}%")
         ).order_by(Post.created_at.desc()).all()
 
-    # 整理輸出
+    # 整理搜尋結果
     data = []
     for p in posts:
         data.append({
@@ -132,7 +141,8 @@ def api_search():
             "author": p.user.username,
             "tag": p.tag,
             "created_at": p.created_at.strftime("%Y-%m-%d %H:%M"),
-            "content": p.content[:80] + "..."
+            "content": p.content[:80] + "...",
+            "comment_count": len(p.comments)
         })
 
     return {"posts": data}
