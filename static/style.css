@@ -1,28 +1,77 @@
+/* --- 全域樣式 --- */
 body {
     margin: 0;
     font-family: "Microsoft JhengHei", sans-serif;
     background: #f4f4f4;
+
+    /* 預留空間避免被 navbar 擋住 */
+    padding-top: 85px;
 }
 
+/* --- Navbar 固定頂部 --- */
 .navbar {
-    display: flex;
-    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    z-index: 1000;
+
     background: #2c3e50;
     color: white;
-    padding: 15px 20px;
+
+    padding: 18px 0;   /* Navbar高度（加厚用這裡調） */
+    display: flex;
+    justify-content: center;
 }
 
-.navbar ul {
+/* Navbar 限制在 1300px 並水平排列 */
+.navbar-container {
+    width: 100%;
+    max-width: 1300px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 25px;
+}
+
+/* 左邊 Logo */
+.navbar .logo {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* 中間搜尋框（強制置中） */
+.navbar-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.search-input {
+    width: 260px;
+    padding: 7px 12px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+}
+
+/* 右側選單 */
+.navbar-menu {
     list-style: none;
     display: flex;
     gap: 20px;
+    margin: 0;
 }
 
-.navbar ul li a {
+.navbar-menu li a {
     color: white;
     text-decoration: none;
 }
 
+/* --- Banner --- */
 .hero {
     text-align: center;
     padding: 60px 0;
@@ -30,62 +79,70 @@ body {
     color: white;
 }
 
-.content {
-    max-width: 900px;
-    margin: 40px auto;
-    background: white;
-    padding: 20px 30px;
-    border-radius: 10px;
-}
-
-/* 整個外框：左右排列（返回鍵 + 卡片）*/
-.post-wrapper {
+/* --- 三欄布局 --- */
+.layout {
     display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 40px;
+    width: 100%;
+    max-width: 1300px;
+    margin: 30px auto;
+    gap: 25px;
 }
 
-/* 左側返回按鈕（獨立在卡片外） */
-.back-side-btn {
-    font-size: 20px;
-    color: #1a73e8;
-    text-decoration: none;
-    padding: 6px 10px;
-    border-radius: 6px;
+/* --- 左側分類欄 Sticky --- */
+.sidebar-left {
+    width: 200px;
     height: fit-content;
-    margin-top: 10px;
-    transition: background 0.2s;
+
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+    position: sticky;
+    top: 120px;
+}
+
+.tag-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.tag-item {
     display: block;
+    background: #f4f4f4;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: 0.2s;
 }
 
-.back-side-btn:hover {
-    background: #e8f0fe;
+.tag-item:hover {
+    background: #e0e0e0;
 }
 
-/* 文章卡片 */
+.tag-active {
+    background: #5e35b1 !important;
+    color: white !important;
+}
+
+/* --- 中間內容 --- */
+.main-content {
+    flex: 1;
+}
+
 .post-card {
-    width: 700px;
+    width: 100%;
     background: white;
     padding: 20px 30px;
     border-radius: 10px;
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
 }
 
-.guest-btn {
-    display: inline-block;
-    padding: 10px 15px;
-    background: #4caf50;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-}
-
-.guest-btn:hover {
-    background: #43a047;
-}
-
-
+/* --- Tag 顏色 --- */
 .tag-badge {
     display: inline-block;
     padding: 4px 10px;
@@ -94,15 +151,21 @@ body {
     font-weight: bold;
     margin-bottom: 10px;
     margin-right: 6px;
-    color: white !important;   /* 確保字是白的 */
+    color: white !important;
 }
 
-/* 各分類顏色 */
-.tag-Life     { background: #1976d2 !important; }  
-.tag-School   { background: #388e3c !important; }  
-.tag-Love     { background: #d81b60 !important; }  
-.tag-Emotion  { background: #8e24aa !important; }  
-.tag-Travel   { background: #0097a7 !important; }  
-.tag-Food     { background: #fb8c00 !important; }  
+.tag-Life     { background: #1976d2 !important; }
+.tag-School   { background: #388e3c !important; }
+.tag-Love     { background: #d81b60 !important; }
+.tag-Emotion  { background: #8e24aa !important; }
+.tag-Travel   { background: #0097a7 !important; }
+.tag-Food     { background: #fb8c00 !important; }
 .tag-Friends  { background: #fdd835 !important; color: #5d4037 !important; }
 .tag-Career   { background: #546e7a !important; }
+
+/* --- 右側欄（預留） --- */
+.sidebar-right {
+    width: 200px;
+    position: sticky;
+    top: 120px;
+}
