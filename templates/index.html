@@ -73,6 +73,12 @@
 
     <nav class="navbar">
         <div class="logo">CampusHub</div>
+        <input id="searchBox" 
+            type="text" 
+            placeholder="搜尋文章..." 
+            onkeyup="searchPosts()" 
+            style="padding:6px; border-radius:6px; border:none; width:200px;">
+
         <ul>
             <li><a href="/home">首頁</a></li>
 
@@ -190,6 +196,46 @@
             }
         });
     </script>
+
+    <script>
+    function searchPosts() {
+        let q = document.getElementById("searchBox").value.trim();
+
+        if (q === "") {
+            // 清空搜尋 → 回到無限滾動
+            page = 1;
+            currentTag = "";
+            loadPosts(true);
+            return;
+        }
+
+        fetch(`/api/search?q=${q}`)
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById("post-container");
+                container.innerHTML = ""; // 清空
+
+                data.posts.forEach(p => {
+                    const div = document.createElement("div");
+                    div.className = "post-card";
+
+                    const tagHTML = p.tag
+                        ? `<span class="tag-badge tag-${p.tag}">${p.tag}</span>`
+                        : "";
+
+                    div.innerHTML = `
+                        <h2><a href="/posts/${p.id}" style="color:#5e35b1; text-decoration:none;">${p.title}</a></h2>
+                        <p style="font-size:14px; color:gray;">作者：${p.author}｜${p.created_at}</p>
+                        ${tagHTML}
+                        <p style="margin-top:10px;">${p.content}</p>
+                    `;
+
+                    container.appendChild(div);
+                });
+            });
+    }
+    </script>
+
 
 </body>
 </html>
