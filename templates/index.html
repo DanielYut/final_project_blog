@@ -4,6 +4,70 @@
     <meta charset="UTF-8">
     <title>CampusHub</title>
     <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        /* --- 3 欄布局 --- */
+        .layout {
+            display: flex;
+            width: 100%;
+            max-width: 1300px;
+            margin: 30px auto;
+            gap: 25px;
+        }
+
+        /* 左側分類欄 */
+        .sidebar-left {
+            width: 200px;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            height: fit-content;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .tag-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .tag-item {
+            display: block;
+            background: #f4f4f4;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 15px;
+        }
+
+        .tag-item:hover {
+            background: #e0e0e0;
+        }
+
+        /* 點擊後高亮 */
+        .tag-active {
+            background: #5e35b1 !important;
+            color: white !important;
+        }
+
+        /* 中間內容 */
+        .main-content {
+            flex: 1;
+        }
+
+        /* 右邊留白 */
+        .sidebar-right {
+            width: 200px;
+        }
+
+        .loading {
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -26,49 +90,70 @@
         <h1>歡迎來到 CampusHub</h1>
     </header>
 
-    <section class="content">
-        <h2>最新文章</h2>
+    <div class="layout">
 
-        <!-- 無限滾動文章容器 -->
-        <div id="post-container"></div>
+        <!--左側分類欄 -->
+        <aside class="sidebar-left">
+            <div class="tag-title">分類標籤</div>
+            
+            <a class="tag-item tag-active" onclick="filterTag('', this)">全部文章</a>
+            <a class="tag-item" onclick="filterTag('Life', this)">Life</a>
+            <a class="tag-item" onclick="filterTag('School', this)">School</a>
+            <a class="tag-item" onclick="filterTag('Love', this)">Love</a>
+            <a class="tag-item" onclick="filterTag('Emotion', this)">Emotion</a>
+            <a class="tag-item" onclick="filterTag('Travel', this)">Travel</a>
+            <a class="tag-item" onclick="filterTag('Food', this)">Food</a>
+            <a class="tag-item" onclick="filterTag('Friends', this)">Friends</a>
+            <a class="tag-item" onclick="filterTag('Career', this)">Career</a>
+        </aside>
 
-        <!-- 載入提示 -->
-        <div id="loading" style="display:none; text-align:center; margin-top:20px;">
-            載入中...
-        </div>
-    </section>
+        <!-- 中間文章列表 -->
+        <main class="main-content">
+            <h2>最新文章</h2>
 
-    <!-- 無限滾動 JS -->
+            <div id="post-container"></div>
+
+            <div id="loading" class="loading">載入中...</div>
+        </main>
+
+        <!--右側留白 -->
+        <aside class="sidebar-right"></aside>
+
+    </div>
+
+    <!-- 無限滾動 + 分類切換 JS -->
     <script>
         let page = 1;
         let loading = false;
+        let currentTag = "";
 
-        function loadPosts() {
+        function loadPosts(reset = false) {
             if (loading) return;
             loading = true;
 
             document.getElementById("loading").style.display = "block";
 
-            fetch(`/api/posts?page=${page}`)
+            fetch(`/api/posts?page=${page}&tag=${currentTag}`)
                 .then(res => res.json())
                 .then(data => {
                     document.getElementById("loading").style.display = "none";
 
                     const container = document.getElementById("post-container");
 
+                    if (reset) container.innerHTML = "";
+
                     data.posts.forEach(p => {
                         const div = document.createElement("div");
                         div.className = "post-card";
 
-                        // 動態套用標籤樣式 class="tag-badge tag-Life"
                         const tagHTML = p.tag
                             ? `<span class="tag-badge tag-${p.tag}">${p.tag}</span>`
                             : "";
 
                         div.innerHTML = `
+                            ${tagHTML}
                             <h2><a href="/posts/${p.id}" style="color:#5e35b1; text-decoration:none;">${p.title}</a></h2>
                             <p style="font-size:14px; color:gray;">作者：${p.author}｜${p.created_at}</p>
-                            ${tagHTML}
                             <p style="margin-top:10px;">${p.content}</p>
                         `;
 
@@ -77,17 +162,30 @@
 
                     if (data.has_next) {
                         page++;
-                        loading = false;
+                        loading = false;   // ★ 必須重置，否則下一次不能載入
                     }
                 });
         }
 
-        // 第一次載入
+        // 切換分類
+        function filterTag(tag, el) {
+            currentTag = tag;
+            page = 1;
+            loading = false; // ★ 重置 loading，避免卡死
+
+            // 更新左側高亮
+            document.querySelectorAll(".tag-item").forEach(t => t.classList.remove("tag-active"));
+            el.classList.add("tag-active");
+
+            loadPosts(true);
+        }
+
+        // 初次載入
         loadPosts();
 
-        // 監聽捲動 → 觸發無限載入
+        // 無限捲動
         window.addEventListener("scroll", () => {
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 300) {
                 loadPosts();
             }
         });

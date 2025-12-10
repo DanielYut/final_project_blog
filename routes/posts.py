@@ -45,10 +45,16 @@ def create_post():
 @posts_bp.route("/api/posts")
 def api_posts():
     page = int(request.args.get("page", 1))
+    tag = request.args.get("tag", "")
     per_page = 10
 
-    posts = Post.query.order_by(Post.created_at.desc()) \
-        .paginate(page=page, per_page=per_page, error_out=False)
+    query = Post.query.order_by(Post.created_at.desc())
+
+    #若有 tag → 過濾分類
+    if tag:
+        query = query.filter_by(tag=tag)
+
+    posts = query.paginate(page=page, per_page=per_page, error_out=False)
 
     data = []
     for p in posts.items:
@@ -57,14 +63,15 @@ def api_posts():
             "title": p.title,
             "content": p.content[:80] + "...",
             "author": p.user.username,
-            "created_at": p.created_at.strftime("%Y-%m-%d %H:%M"),
-            "tag": p.tag  #新增 tag 到 JSON API
+            "tag": p.tag,
+            "created_at": p.created_at.strftime("%Y-%m-%d %H:%M")
         })
 
     return {
         "posts": data,
         "has_next": posts.has_next
     }
+
 
 @posts_bp.route("/tag/<tag>")
 def posts_by_tag(tag):
