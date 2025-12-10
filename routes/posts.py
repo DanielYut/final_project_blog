@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, request, redirect
 from flask_login import login_required, current_user
 from models.post import Post
+from models.comment import Comment
 from extensions import db
+
 
 posts_bp = Blueprint("posts", __name__)
 
@@ -13,9 +15,29 @@ def list_posts():
 
 
 # 📌 單篇文章
-@posts_bp.route("/posts/<int:post_id>")
+
+@posts_bp.route("/posts/<int:post_id>", methods=["GET", "POST"])
 def view_post(post_id):
     post = Post.query.get_or_404(post_id)
+
+    # 處理留言提交
+    if request.method == "POST":
+        content = request.form["content"]
+
+        # 判斷登入狀態：登入 → 用帳號名；訪客 → 顯示 "訪客"
+        author = current_user.username if current_user.is_authenticated else "訪客"
+
+        new_comment = Comment(
+            content=content,
+            author=author,
+            post_id=post.id
+        )
+
+        db.session.add(new_comment)
+        db.session.commit()
+
+        return redirect(f"/posts/{post_id}")
+
     return render_template("post_view.html", post=post)
 
 

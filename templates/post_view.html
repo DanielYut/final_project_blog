@@ -46,7 +46,6 @@
             margin-bottom: 12px;
         }
 
-        /*  新增與首頁一致的標籤 UI */
         .tag-badge {
             display: inline-block;
             background: #e3f2fd;
@@ -54,12 +53,58 @@
             padding: 3px 10px;
             border-radius: 8px;
             font-size: 13px;
-            margin: 0 0 12px 0;
+            margin-bottom: 12px;
         }
 
         .post-content {
             font-size: 17px;
             line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        /* ===== 留言區 ===== */
+        .comment-box {
+            background: #f7f7f7;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .comment-time {
+            color: gray;
+            font-size: 13px;
+        }
+
+        .comment-content {
+            margin-top: 6px;
+            font-size: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            resize: none;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 14px;
+            background: #1877f2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0c5ed9;
         }
     </style>
 </head>
@@ -69,7 +114,7 @@
 <div class="post-wrapper">
 
     <!-- 返回鍵 -->
-    <a href="javascript:history.back()" class="back-side-btn">← 返回</a>
+    <a href="/home" class="back-side-btn">← 返回</a>
 
     <!-- 單篇文章卡片 -->
     <div class="post-card">
@@ -88,6 +133,33 @@
             {{ post.content | safe }}
         </p>
 
+    <hr>
+
+    <!-- ========== 新增留言在最上方 ========== -->
+    <h3>新增留言</h3>
+
+    <form method="POST">
+        <textarea name="content" rows="3" placeholder="輸入留言..." required></textarea>
+        <button type="submit">送出留言</button>
+    </form>
+
+    <hr>
+
+    <!-- ========== 留言列表（固定高度 + 獨立滾動）=========== -->
+    <h3>留言</h3>
+
+    <div class="comment-container">
+        {% if post.comments %}
+            {% for c in post.comments %}
+                <div class="comment-box">
+                    <div class="comment-author">{{ c.author }}</div>
+                    <div class="comment-time">{{ c.created_at.strftime("%Y-%m-%d %H:%M") }}</div>
+                    <div class="comment-content">{{ c.content }}</div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="color:gray;">目前沒有留言。</p>
+        {% endif %}
     </div>
 
 </div>
