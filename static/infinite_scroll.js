@@ -22,6 +22,7 @@ function loadPosts() {
                 div.innerHTML = `
                     <h2><a href="/posts/${p.id}">${p.title}</a></h2>
                     <p>作者：${p.author}｜${p.created_at}</p>
+                    <span class="tag-badge">${p.tag}</span>   <!--顯示標籤 -->
                     <p>${p.content}</p>
                 `;
 

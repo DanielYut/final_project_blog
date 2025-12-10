@@ -84,3 +84,13 @@ body {
 .guest-btn:hover {
     background: #43a047;
 }
+
+.tag-badge {
+    display: inline-block;
+    background: #e3f2fd;
+    color: #1565c0;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 8px;
+}

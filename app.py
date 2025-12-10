@@ -75,19 +75,20 @@ def create_app():
 
         # 初次載入假文章
         if Post.query.count() == 0:
-            print("⚙ Importing articles...")
+            print("⚙ Importing tagged articles...")
 
             for article in articles:
                 author = random.choice(users)
                 post = Post(
                     title=article["title"],
                     content=article["content"],
+                    tag=article.get("tag", "Life"),  #新增 TAG
                     user_id=author.id
                 )
                 db.session.add(post)
 
             db.session.commit()
-            print("✔ Articles imported.")
+            print("✔ Successfully imported tagged articles!")
 
     return app
 

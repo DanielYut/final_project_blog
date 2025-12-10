@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>新增文章 | CampusHub</title>
+
     <style>
         body {
             background: #f0f2f5;
             font-family: "Microsoft JhengHei";
         }
+
         .create-box {
             max-width: 700px;
             margin: 40px auto;
@@ -16,13 +18,16 @@
             border-radius: 12px;
             box-shadow: 0px 3px 12px rgba(0,0,0,0.15);
         }
-        input, textarea {
+
+        input, textarea, select {
             width: 100%;
             padding: 12px;
             margin-bottom: 15px;
             border-radius: 6px;
             border: 1px solid #ccc;
+            font-size: 16px;
         }
+
         button {
             background: #1877f2;
             color: white;
@@ -30,19 +35,41 @@
             border: none;
             border-radius: 6px;
             cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #0d65d9;
         }
     </style>
 </head>
 
 <body>
+
     <div class="create-box">
         <h2>新增文章</h2>
 
         <form method="POST">
+
             <input name="title" placeholder="文章標題" required>
+
             <textarea name="content" rows="10" placeholder="內容..." required></textarea>
+
+            <!-- ⭐ 新增標籤 -->
+            <select name="tag" required>
+                <option value="Life">Life</option>
+                <option value="School">School</option>
+                <option value="Love">Love</option>
+                <option value="Travel">Travel</option>
+                <option value="Food">Food</option>
+                <option value="Emotion">Emotion</option>
+                <option value="Friends">Friends</option>
+                <option value="Career">Career</option>
+            </select>
+
             <button type="submit">發佈</button>
         </form>
     </div>
+
 </body>
 </html>

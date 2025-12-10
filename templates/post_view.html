@@ -9,18 +9,18 @@
         .post-wrapper {
             display: flex;
             justify-content: center;
-            gap: 30px;
+            gap: 20px;
             margin-top: 40px;
         }
 
         .back-side-btn {
-            font-size: 18px;
+            font-size: 20px;
             color: #1a73e8;
             text-decoration: none;
             padding: 6px 10px;
             border-radius: 6px;
             height: fit-content;
-            margin-top: 40px;
+            margin-top: 10px;
             transition: background 0.2s;
         }
 
@@ -31,24 +31,34 @@
         .post-card {
             width: 700px;
             background: white;
-            padding: 25px 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
 
         .post-title {
-            font-size: 30px;
-            font-weight: bold;
+            font-size: 28px;
             color: #1877f2;
         }
 
         .post-meta {
             color: gray;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
+        }
+
+        /* ⭐ 新增與首頁一致的標籤 UI */
+        .tag-badge {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin: 0 0 12px 0;
         }
 
         .post-content {
-            font-size: 18px;
+            font-size: 17px;
             line-height: 1.7;
         }
     </style>
@@ -56,25 +66,32 @@
 
 <body>
 
-    <div class="post-wrapper">
+<div class="post-wrapper">
 
-        <!-- 左側返回鍵 -->
-        <a href="javascript:history.back()" class="back-side-btn">← 返回</a>
+    <!-- 返回鍵 -->
+    <a href="javascript:history.back()" class="back-side-btn">← 返回</a>
 
-        <!-- 單一文章卡片 -->
-        <div class="post-card">
-            <div class="post-title">{{ post.title }}</div>
+    <!-- 單篇文章卡片 -->
+    <div class="post-card">
 
-            <div class="post-meta">
-                作者：{{ post.user.username }}｜{{ post.created_at.strftime("%Y-%m-%d %H:%M") }}
-            </div>
+        <h1 class="post-title">{{ post.title }}</h1>
 
-            <div class="post-content">
-                {{ post.content | safe }}
-            </div>
-        </div>
+        <p class="post-meta">
+            作者：{{ post.user.username }} ｜ {{ post.created_at.strftime("%Y-%m-%d %H:%M") }}
+        </p>
+
+        {% if post.tag %}
+        <!-- ⭐ 與首頁一致的美化過的標籤 -->
+        <span class="tag-badge">{{ post.tag }}</span>
+        {% endif %}
+
+        <p class="post-content">
+            {{ post.content | safe }}
+        </p>
 
     </div>
+
+</div>
 
 </body>
 </html>

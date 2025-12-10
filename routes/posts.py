@@ -26,10 +26,12 @@ def create_post():
     if request.method == "POST":
         title = request.form["title"]
         content = request.form["content"]
+        tag = request.form["tag"]  #接收標籤
 
         new_post = Post(
             title=title,
             content=content,
+            tag=tag,
             user_id=current_user.id
         )
 
@@ -43,9 +45,9 @@ def create_post():
 @posts_bp.route("/api/posts")
 def api_posts():
     page = int(request.args.get("page", 1))
-    per_page = 10  # 每次加載 10 篇
+    per_page = 10
 
-    posts = Post.query.order_by(Post.created_at.desc())\
+    posts = Post.query.order_by(Post.created_at.desc()) \
         .paginate(page=page, per_page=per_page, error_out=False)
 
     data = []
@@ -55,7 +57,8 @@ def api_posts():
             "title": p.title,
             "content": p.content[:80] + "...",
             "author": p.user.username,
-            "created_at": p.created_at.strftime("%Y-%m-%d %H:%M")
+            "created_at": p.created_at.strftime("%Y-%m-%d %H:%M"),
+            "tag": p.tag  #新增 tag 到 JSON API
         })
 
     return {
