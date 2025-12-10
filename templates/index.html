@@ -211,10 +211,14 @@
     function searchPosts() {
         let q = document.getElementById("searchBox").value.trim();
 
+        //  搜尋時強制回到「全部文章」
+        currentTag = "";
+        document.querySelectorAll(".tag-item").forEach(t => t.classList.remove("tag-active"));
+        document.querySelector(".tag-item").classList.add("tag-active"); // 第一個（全部文章）
+
         if (q === "") {
             // 清空搜尋 → 回到無限滾動
             page = 1;
-            currentTag = "";
             loadPosts(true);
             return;
         }
@@ -243,7 +247,7 @@
                     container.appendChild(div);
                 });
             });
-    }
+        }
     </script>
 
 
