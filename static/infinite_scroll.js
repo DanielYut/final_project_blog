@@ -1,6 +1,6 @@
 let page = 1;
 let loading = false;
-let currentTag = ""; // ⭐ 目前篩選的分類
+let currentTag = ""; //目前篩選的分類
 
 function loadPosts(reset = false) {
     if (loading) return;
