@@ -85,12 +85,24 @@ body {
     background: #43a047;
 }
 
+
 .tag-badge {
     display: inline-block;
-    background: #e3f2fd;
-    color: #1565c0;
-    padding: 3px 10px;
-    border-radius: 8px;
+    padding: 4px 10px;
+    border-radius: 10px;
     font-size: 13px;
-    margin-bottom: 8px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-right: 6px;
+    color: white !important;   /* 確保字是白的 */
 }
+
+/* 各分類顏色 */
+.tag-Life     { background: #1976d2 !important; }  
+.tag-School   { background: #388e3c !important; }  
+.tag-Love     { background: #d81b60 !important; }  
+.tag-Emotion  { background: #8e24aa !important; }  
+.tag-Travel   { background: #0097a7 !important; }  
+.tag-Food     { background: #fb8c00 !important; }  
+.tag-Friends  { background: #fdd835 !important; color: #5d4037 !important; }
+.tag-Career   { background: #546e7a !important; }

@@ -65,3 +65,8 @@ def api_posts():
         "posts": data,
         "has_next": posts.has_next
     }
+
+@posts_bp.route("/tag/<tag>")
+def posts_by_tag(tag):
+    posts = Post.query.filter_by(tag=tag).order_by(Post.created_at.desc()).all()
+    return render_template("tag_view.html", posts=posts, tag=tag)

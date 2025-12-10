@@ -38,7 +38,60 @@
         </div>
     </section>
 
-    <script src="/static/infinite_scroll.js"></script>
+    <!-- 無限滾動 JS -->
+    <script>
+        let page = 1;
+        let loading = false;
+
+        function loadPosts() {
+            if (loading) return;
+            loading = true;
+
+            document.getElementById("loading").style.display = "block";
+
+            fetch(`/api/posts?page=${page}`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("loading").style.display = "none";
+
+                    const container = document.getElementById("post-container");
+
+                    data.posts.forEach(p => {
+                        const div = document.createElement("div");
+                        div.className = "post-card";
+
+                        // 動態套用標籤樣式 class="tag-badge tag-Life"
+                        const tagHTML = p.tag
+                            ? `<span class="tag-badge tag-${p.tag}">${p.tag}</span>`
+                            : "";
+
+                        div.innerHTML = `
+                            <h2><a href="/posts/${p.id}" style="color:#5e35b1; text-decoration:none;">${p.title}</a></h2>
+                            <p style="font-size:14px; color:gray;">作者：${p.author}｜${p.created_at}</p>
+                            ${tagHTML}
+                            <p style="margin-top:10px;">${p.content}</p>
+                        `;
+
+                        container.appendChild(div);
+                    });
+
+                    if (data.has_next) {
+                        page++;
+                        loading = false;
+                    }
+                });
+        }
+
+        // 第一次載入
+        loadPosts();
+
+        // 監聽捲動 → 觸發無限載入
+        window.addEventListener("scroll", () => {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
+                loadPosts();
+            }
+        });
+    </script>
 
 </body>
 </html>

@@ -81,8 +81,7 @@
         </p>
 
         {% if post.tag %}
-        <!-- ⭐ 與首頁一致的美化過的標籤 -->
-        <span class="tag-badge">{{ post.tag }}</span>
+        <span class="tag-badge tag-{{ post.tag }}">{{ post.tag }}</span>
         {% endif %}
 
         <p class="post-content">
