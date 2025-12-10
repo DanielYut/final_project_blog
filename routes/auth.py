@@ -5,21 +5,22 @@ from extensions import db
 
 auth_bp = Blueprint("auth", __name__)
 
+# ----------------------------------------------
+# ⭐ 註冊
+# ----------------------------------------------
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
 
-        # 檢查帳號是否已存在
         existing = User.query.filter_by(username=username).first()
         if existing:
-            error = "此帳號已被使用，請換一個帳號"
-            return render_template("register.html", error=error)
+            return render_template("register.html", error="此帳號已被使用")
 
-        # 建立新帳號
         user = User(username=username)
         user.set_password(password)
+
         db.session.add(user)
         db.session.commit()
 
@@ -28,6 +29,9 @@ def register():
     return render_template("register.html")
 
 
+# ----------------------------------------------
+# ⭐ 登入
+# ----------------------------------------------
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -37,17 +41,19 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if not user or not user.check_password(password):
-            error = "帳號或密碼錯誤"
-            return render_template("login.html", error=error)
+            return render_template("login.html", error="帳號或密碼錯誤")
 
         login_user(user)
-        return redirect("/home")    #修正！登入成功轉到文章首頁
+        return redirect("/home")
 
     return render_template("login.html")
 
 
+# ----------------------------------------------
+# ⭐ 登出
+# ----------------------------------------------
 @auth_bp.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect("/login")       #登出後回登入頁
+    return redirect("/login")

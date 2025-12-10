@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect
 from extensions import db, login_manager
 from faker import Faker
 import random, json, os
+from flask_login import logout_user
 
 def create_app():
     app = Flask(__name__)
@@ -18,34 +19,35 @@ def create_app():
 
     # Blueprints
     from routes.auth import auth_bp
-    from routes.posts import posts_bp  
+    from routes.posts import posts_bp
     app.register_blueprint(auth_bp)
     app.register_blueprint(posts_bp)
 
-    # -----------------------------
-    # ⭐ 1. 強制一開始顯示登入頁
-    # -----------------------------
+    # -------------------------------------------------
+    # ⭐ 1. 強制首頁 → 登入頁
+    # -------------------------------------------------
     @app.route("/")
     def force_login():
         return redirect("/login")
 
-    # -----------------------------
-    # ⭐ 2. 訪客模式 → 直接進首頁
-    # -----------------------------
+    # -------------------------------------------------
+    # ⭐ 2. 訪客模式（強制登出 → 未登入狀態）
+    # -------------------------------------------------
     @app.route("/guest")
     def guest_mode():
+        logout_user()
         return redirect("/home")
 
-    # -----------------------------
-    # ⭐ 3. 真正首頁（顯示文章）
-    # -----------------------------
+    # -------------------------------------------------
+    # ⭐ 3. 首頁（無限滾動載入文章）
+    # -------------------------------------------------
     @app.route("/home")
     def home():
         return render_template("index.html")
 
-    # -----------------------------
-    # 🔥 Database initialization
-    # -----------------------------
+    # -------------------------------------------------
+    # 🔥 Database Initialization
+    # -------------------------------------------------
     with app.app_context():
         db.create_all()
 
@@ -66,14 +68,14 @@ def create_app():
 
         users = User.query.all()
 
-        # 讀取文章 JSON
+        # 讀取 JSON 文章
         json_path = os.path.join(os.path.dirname(__file__), "data/english_articles.json")
         with open(json_path, "r", encoding="utf-8") as f:
             articles = json.load(f)
 
-        # 導入假文章
+        # 初次載入假文章
         if Post.query.count() == 0:
-            print("⚙ Importing 50 paired articles...")
+            print("⚙ Importing articles...")
 
             for article in articles:
                 author = random.choice(users)
@@ -85,7 +87,7 @@ def create_app():
                 db.session.add(post)
 
             db.session.commit()
-            print("✔ Successfully imported paired articles!")
+            print("✔ Articles imported.")
 
     return app
 

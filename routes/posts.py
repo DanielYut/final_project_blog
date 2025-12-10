@@ -36,7 +36,7 @@ def create_post():
         db.session.add(new_post)
         db.session.commit()
 
-        return redirect("/")
+        return redirect("/home")
 
     return render_template("post_create.html")
 
