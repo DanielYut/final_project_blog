@@ -1,8 +1,10 @@
 from flask import Flask, render_template, redirect
-from extensions import db, login_manager
+from extensions import db, login_manager, mail
 from faker import Faker
 import random, json, os
 from flask_login import logout_user
+from flask_mail import Mail
+
 
 def create_app():
     app = Flask(__name__)
@@ -10,7 +12,17 @@ def create_app():
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///campushub.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+    # Email Config
+    app.config["MAIL_SERVER"] = "smtp.gmail.com"
+    app.config["MAIL_PORT"] = 587
+    app.config["MAIL_USE_TLS"] = True
+    app.config["MAIL_USERNAME"] = "daniel950401@gmail.com"        # 你自己換
+    app.config["MAIL_PASSWORD"] = "dmoi ylhi uaib tldg"            # 你自己換
+    app.config["MAIL_DEFAULT_SENDER"] = "daniel950401@gmail.com"   # 你自己換
+
+    # Init extensions
     db.init_app(app)
+    mail.init_app(app)
     login_manager.init_app(app)
 
     # Models
@@ -20,75 +32,68 @@ def create_app():
     # Blueprints
     from routes.auth import auth_bp
     from routes.posts import posts_bp
+    from routes.reset import reset_bp
+
     app.register_blueprint(auth_bp)
     app.register_blueprint(posts_bp)
+    app.register_blueprint(reset_bp)
 
-    # -------------------------------------------------
-    # 1. 強制首頁 → 登入頁
-    # -------------------------------------------------
+    # ---------------------------
+    # Routes
+    # ---------------------------
+
     @app.route("/")
     def force_login():
         return redirect("/login")
 
-    # -------------------------------------------------
-    # 2. 訪客模式（強制登出 → 未登入狀態）
-    # -------------------------------------------------
     @app.route("/guest")
     def guest_mode():
         logout_user()
         return redirect("/home")
 
-    # -------------------------------------------------
-    # 3. 首頁（無限滾動載入文章）
-    # -------------------------------------------------
     @app.route("/home")
     def home():
         return render_template("index.html")
 
-    # -------------------------------------------------
+    # ---------------------------
     # Database Initialization
-    # -------------------------------------------------
+    # ---------------------------
     with app.app_context():
         db.create_all()
 
         fake = Faker("en_US")
 
-        # 生成假使用者
+        # Fake Users
         if User.query.count() < 30:
-            print("⚙ Generating 30 English users...")
+            print("Generating fake users...")
             for _ in range(30):
                 name = fake.name()
-                password = "123456"
                 if not User.query.filter_by(username=name).first():
-                    user = User(username=name)
-                    user.set_password(password)
+                    user = User(username=name, email=fake.email())
+                    user.set_password("123456")
                     db.session.add(user)
             db.session.commit()
-            print("✔ Users generated.")
 
         users = User.query.all()
 
-        # 讀取 JSON 文章
+        # Load article data
         json_path = os.path.join(os.path.dirname(__file__), "data/english_articles.json")
         with open(json_path, "r", encoding="utf-8") as f:
             articles = json.load(f)
 
-        # 初次載入假文章
         if Post.query.count() == 0:
-            print("⚙ Importing tagged articles...")
-
+            print("Importing articles...")
             for article in articles:
                 author = random.choice(users)
                 post = Post(
                     title=article["title"],
                     content=article["content"],
-                    tag=article.get("tag", "Life"),  #新增 TAG
+                    tag=article.get("tag", "Life"),
                     user_id=author.id
                 )
                 db.session.add(post)
-
             db.session.commit()
-            print("✔ Successfully imported tagged articles!")
+            print("Imported.")
 
     return app
 

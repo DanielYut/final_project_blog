@@ -63,10 +63,31 @@
             font-size: 14px;
         }
 
-        .register-link {
+        .register-link, .forgot-link {
             margin-top: 10px;
             display: block;
             font-size: 14px;
+            color: #1877f2;
+            text-decoration: none;
+        }
+
+        .register-link:hover, .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .guest-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background: #4caf50;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .guest-btn:hover {
+            background: #43a047;
         }
     </style>
 </head>
@@ -84,13 +105,13 @@
         <form method="POST">
             <input name="username" placeholder="帳號" required>
             <input name="password" type="password" placeholder="密碼" required>
+
             <button type="submit">登入</button>
         </form>
-        
-        <div style="margin-top: 15px; text-align: center;">
-            <a href="/guest" class="guest-btn">以訪客模式瀏覽</a>
-        </div>
 
+        <a href="/forgot" class="register-link">忘記密碼？</a>
+
+        <a href="/guest" class="guest-btn">以訪客模式瀏覽</a>
 
         <a href="/register" class="register-link">沒有帳號？註冊</a>
     </div>

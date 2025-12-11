@@ -6,8 +6,14 @@ bcrypt = Bcrypt()
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+
     username = db.Column(db.String(50), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+
     password = db.Column(db.String(255), nullable=False)
+
+    reset_code = db.Column(db.String(6), nullable=True)
+    reset_code_expire = db.Column(db.DateTime, nullable=True)
 
     def set_password(self, raw_password):
         self.password = bcrypt.generate_password_hash(raw_password).decode("utf-8")
