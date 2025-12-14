@@ -16,9 +16,9 @@ def create_app():
     app.config["MAIL_SERVER"] = "smtp.gmail.com"
     app.config["MAIL_PORT"] = 587
     app.config["MAIL_USE_TLS"] = True
-    app.config["MAIL_USERNAME"] = "daniel950401@gmail.com"        # 你自己換
-    app.config["MAIL_PASSWORD"] = "dmoi ylhi uaib tldg"            # 你自己換
-    app.config["MAIL_DEFAULT_SENDER"] = "daniel950401@gmail.com"   # 你自己換
+    app.config["MAIL_USERNAME"] = "daniel950401@gmail.com"   
+    app.config["MAIL_PASSWORD"] = "dmoi ylhi uaib tldg"           
+    app.config["MAIL_DEFAULT_SENDER"] = "daniel950401@gmail.com"   
 
     # Init extensions
     db.init_app(app)

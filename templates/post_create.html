@@ -41,6 +41,21 @@
         button:hover {
             background: #0d65d9;
         }
+
+        /* ===== 新增：取消按鈕樣式 ===== */
+        .cancel-btn {
+            display: inline-block;
+            padding: 12px 18px;
+            background: #e0e0e0;
+            color: #333;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .cancel-btn:hover {
+            background: #d5d5d5;
+        }
     </style>
 </head>
 
@@ -55,7 +70,6 @@
 
             <textarea name="content" rows="10" placeholder="內容..." required></textarea>
 
-            <!--  新增標籤 -->
             <select name="tag" required>
                 <option value="Life">Life</option>
                 <option value="School">School</option>
@@ -67,7 +81,12 @@
                 <option value="Career">Career</option>
             </select>
 
-            <button type="submit">發佈</button>
+            <!-- 發佈 + 取消 -->
+            <div style="display: flex; gap: 10px;">
+                <button type="submit">發佈</button>
+                <a href="/home" class="cancel-btn">取消</a>
+            </div>
+
         </form>
     </div>
 
