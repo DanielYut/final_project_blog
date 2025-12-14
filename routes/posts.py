@@ -94,7 +94,8 @@ def api_posts():
             "author": p.user.username,
             "tag": p.tag,
             "created_at": p.created_at.strftime("%Y-%m-%d %H:%M"),
-            "comment_count": len(p.comments)
+            "comment_count": len(p.comments),
+            "like_count": p.likes.count()
         })
 
     return {"posts": data, "has_next": posts.has_next}
@@ -142,7 +143,8 @@ def api_search():
             "tag": p.tag,
             "created_at": p.created_at.strftime("%Y-%m-%d %H:%M"),
             "content": p.content[:80] + "...",
-            "comment_count": len(p.comments)
+            "comment_count": len(p.comments),
+            "like_count": p.likes.count()
         })
 
     return {"posts": data}

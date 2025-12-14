@@ -28,15 +28,19 @@ def create_app():
     # Models
     from models.post import Post
     from models.user import User
+    
 
     # Blueprints
     from routes.auth import auth_bp
     from routes.posts import posts_bp
     from routes.reset import reset_bp
+    from routes.likes import likes_bp
+    
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(posts_bp)
     app.register_blueprint(reset_bp)
+    app.register_blueprint(likes_bp)
 
     # ---------------------------
     # Routes

@@ -139,121 +139,142 @@
 
     <!-- 無限滾動 + 分類切換 JS -->
     <script>
-        let page = 1;
-        let loading = false;
-        let currentTag = "";
+let page = 1;
+let loading = false;
+let currentTag = "";
 
-        function loadPosts(reset = false) {
-            if (loading) return;
-            loading = true;
+function renderPost(p) {
+    const div = document.createElement("div");
+    div.className = "post-card";
 
-            document.getElementById("loading").style.display = "block";
+    const tagHTML = p.tag
+        ? `<span class="tag-badge tag-${p.tag}">${p.tag}</span>`
+        : "";
 
-            fetch(`/api/posts?page=${page}&tag=${currentTag}`)
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById("loading").style.display = "none";
+    div.innerHTML = `
+        <h2>
+            <a href="/posts/${p.id}" style="color:#5e35b1; text-decoration:none;">
+                ${p.title}
+            </a>
+        </h2>
 
-                    const container = document.getElementById("post-container");
+        <p style="font-size:14px; color:gray;">
+            作者：${p.author}｜${p.created_at}
+        </p>
 
-                    if (reset) container.innerHTML = "";
+        <p style="font-size:14px; margin-bottom:6px;">
+            💬 留言：${p.comment_count}
+            &nbsp;｜&nbsp;
+            👍 <span id="like-count-${p.id}">${p.like_count}</span>
+            <button onclick="toggleLike(${p.id})"
+                    style="border:none; background:none; cursor:pointer;">
+                按讚
+            </button>
+        </p>
 
-                    data.posts.forEach(p => {
-                        const div = document.createElement("div");
-                        div.className = "post-card";
+        ${tagHTML}
 
-                        const tagHTML = p.tag
-                            ? `<span class="tag-badge tag-${p.tag}">${p.tag}</span>`
-                            : "";
+        <p style="margin-top:10px;">${p.content}</p>
+    `;
 
-                        div.innerHTML = `
-                            
-                            <h2><a href="/posts/${p.id}" style="color:#5e35b1; text-decoration:none;">${p.title}</a></h2>
-                            <p style="font-size:14px; color:gray;">
-                                作者：${p.author}｜${p.created_at}｜留言：${p.comment_count}
-                            </p>
-                            ${tagHTML}
-                            <p style="margin-top:10px;">${p.content}</p>
-                        `;
+    return div;
+}
 
-                        container.appendChild(div);
-                    });
+function loadPosts(reset = false) {
+    if (loading) return;
+    loading = true;
 
-                    if (data.has_next) {
-                        page++;
-                        loading = false;   // ★ 必須重置，否則下一次不能載入
-                    }
-                });
-        }
+    document.getElementById("loading").style.display = "block";
 
-        // 切換分類
-        function filterTag(tag, el) {
-            currentTag = tag;
-            page = 1;
-            loading = false; // ★ 重置 loading，避免卡死
+    fetch(`/api/posts?page=${page}&tag=${currentTag}`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("loading").style.display = "none";
 
-            // 更新左側高亮
-            document.querySelectorAll(".tag-item").forEach(t => t.classList.remove("tag-active"));
-            el.classList.add("tag-active");
+            const container = document.getElementById("post-container");
+            if (reset) container.innerHTML = "";
 
-            loadPosts(true);
-        }
+            data.posts.forEach(p => {
+                container.appendChild(renderPost(p));
+            });
 
-        // 初次載入
-        loadPosts();
-
-        // 無限捲動
-        window.addEventListener("scroll", () => {
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 300) {
-                loadPosts();
+            if (data.has_next) {
+                page++;
+                loading = false;
             }
         });
-    </script>
+}
 
-    <script>
-    function searchPosts() {
-        let q = document.getElementById("searchBox").value.trim();
+// 切換分類
+function filterTag(tag, el) {
+    currentTag = tag;
+    page = 1;
+    loading = false;
 
-        //  搜尋時強制回到「全部文章」
-        currentTag = "";
-        document.querySelectorAll(".tag-item").forEach(t => t.classList.remove("tag-active"));
-        document.querySelector(".tag-item").classList.add("tag-active"); // 第一個（全部文章）
+    document.querySelectorAll(".tag-item")
+        .forEach(t => t.classList.remove("tag-active"));
+    el.classList.add("tag-active");
 
-        if (q === "") {
-            // 清空搜尋 → 回到無限滾動
-            page = 1;
-            loadPosts(true);
-            return;
-        }
+    loadPosts(true);
+}
 
-        fetch(`/api/search?q=${q}`)
-            .then(res => res.json())
-            .then(data => {
-                const container = document.getElementById("post-container");
-                container.innerHTML = ""; // 清空
+// 搜尋
+function searchPosts() {
+    const q = document.getElementById("searchBox").value.trim();
 
-                data.posts.forEach(p => {
-                    const div = document.createElement("div");
-                    div.className = "post-card";
+    // 搜尋時強制回到全部文章
+    currentTag = "";
+    page = 1;
 
-                    const tagHTML = p.tag
-                        ? `<span class="tag-badge tag-${p.tag}">${p.tag}</span>`
-                        : "";
+    document.querySelectorAll(".tag-item")
+        .forEach(t => t.classList.remove("tag-active"));
+    document.querySelector(".tag-item").classList.add("tag-active");
 
-                    div.innerHTML = `
-                        <h2><a href="/posts/${p.id}" style="color:#5e35b1; text-decoration:none;">${p.title}</a></h2>
-                        <p style="font-size:14px; color:gray;">
-                            作者：${p.author}｜${p.created_at}｜留言：${p.comment_count}
-                        </p>
-                        ${tagHTML}
-                        <p style="margin-top:10px;">${p.content}</p>
-                    `;
+    if (q === "") {
+        loadPosts(true);
+        return;
+    }
 
-                    container.appendChild(div);
-                });
+    fetch(`/api/search?q=${q}`)
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById("post-container");
+            container.innerHTML = "";
+            data.posts.forEach(p => {
+                container.appendChild(renderPost(p));
             });
+        });
+}
+
+// 按讚
+function toggleLike(postId) {
+    fetch(`/api/posts/${postId}/like`, {
+        method: "POST"
+    })
+    .then(res => {
+        if (res.status === 401) {
+            alert("請先登入才能按讚");
+            throw new Error();
         }
-    </script>
+        return res.json();
+    })
+    .then(data => {
+        document.getElementById(`like-count-${postId}`).innerText =
+            data.like_count;
+    });
+}
+
+// 初次載入
+loadPosts();
+
+// 無限捲動
+window.addEventListener("scroll", () => {
+    if ((window.innerHeight + window.scrollY) >=
+        document.body.offsetHeight - 300) {
+        loadPosts();
+    }
+});
+</script>
 
 
 </body>
