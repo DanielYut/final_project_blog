@@ -1,5 +1,6 @@
 from extensions import db
 from datetime import datetime
+from models.like import Like
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -14,3 +15,7 @@ class Post(db.Model):
     user = db.relationship("User", backref="posts")
     comments = db.relationship("Comment", backref="post", cascade="all, delete")
     likes = db.relationship("Like", backref="post", lazy="dynamic")
+
+    @property
+    def like_count(self):
+        return Like.query.filter_by(post_id=self.id).count()

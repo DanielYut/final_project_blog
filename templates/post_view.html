@@ -21,11 +21,6 @@
             border-radius: 6px;
             height: fit-content;
             margin-top: 10px;
-            transition: background 0.2s;
-        }
-
-        .back-side-btn:hover {
-            background: #e8f0fe;
         }
 
         .post-card {
@@ -43,7 +38,22 @@
 
         .post-meta {
             color: gray;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .post-actions {
+            font-size: 14px;
+            color: gray;
             margin-bottom: 12px;
+        }
+
+        .like-btn {
+            border: none;
+            background: none;
+            color: gray;
+            cursor: pointer;
+            padding: 0;
         }
 
         .tag-badge {
@@ -62,7 +72,6 @@
             margin-bottom: 30px;
         }
 
-        /* ===== 留言區 ===== */
         .comment-box {
             background: #f7f7f7;
             padding: 12px 15px;
@@ -103,8 +112,10 @@
             cursor: pointer;
         }
 
-        button:hover {
-            background: #0c5ed9;
+        .comment-container {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -113,57 +124,88 @@
 
 <div class="post-wrapper">
 
-    <!-- 返回鍵 -->
     <a href="/home" class="back-side-btn">← 返回</a>
 
-    <!-- 單篇文章卡片 -->
     <div class="post-card">
 
         <h1 class="post-title">{{ post.title }}</h1>
 
-        <p class="post-meta">
-            作者：{{ post.user.username }} ｜ {{ post.created_at.strftime("%Y-%m-%d %H:%M") }}
-            ｜ 留言：{{ post.comments|length }}
-        </p>
+        <div class="post-meta">
+            作者：{{ post.user.username }}
+            ｜ {{ post.created_at.strftime("%Y-%m-%d %H:%M") }}
+        </div>
+
+        <div class="post-actions">
+            💬 留言：{{ post.comments|length }}
+            &nbsp;｜&nbsp;
+
+            {% if current_user.is_authenticated %}
+                👍 <span id="like-count">{{ post.like_count }}</span>
+                <button class="like-btn" onclick="toggleLike({{ post.id }})">
+                    按讚
+                </button>
+            {% else %}
+                👍 {{ post.like_count }}
+            {% endif %}
+        </div>
 
         {% if post.tag %}
-        <span class="tag-badge tag-{{ post.tag }}">{{ post.tag }}</span>
+            <span class="tag-badge tag-{{ post.tag }}">{{ post.tag }}</span>
         {% endif %}
 
         <p class="post-content">
             {{ post.content | safe }}
         </p>
 
-    <hr>
+        <hr>
 
-    <!-- ========== 新增留言在最上方 ========== -->
-    <h3>新增留言</h3>
+        <h3>新增留言</h3>
 
-    <form method="POST">
-        <textarea name="content" rows="3" placeholder="輸入留言..." required></textarea>
-        <button type="submit">送出留言</button>
-    </form>
+        <form method="POST">
+            <textarea name="content" rows="3" placeholder="輸入留言..." required></textarea>
+            <button type="submit">送出留言</button>
+        </form>
 
-    <hr>
+        <hr>
 
-    <!-- ========== 留言列表（固定高度 + 獨立滾動）=========== -->
-    <h3>留言</h3>
+        <h3>留言</h3>
 
-    <div class="comment-container">
-        {% if post.comments %}
-            {% for c in post.comments %}
-                <div class="comment-box">
-                    <div class="comment-author">{{ c.author }}</div>
-                    <div class="comment-time">{{ c.created_at.strftime("%Y-%m-%d %H:%M") }}</div>
-                    <div class="comment-content">{{ c.content }}</div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p style="color:gray;">目前沒有留言。</p>
-        {% endif %}
+        <div class="comment-container">
+            {% if post.comments %}
+                {% for c in post.comments %}
+                    <div class="comment-box">
+                        <div class="comment-author">{{ c.author }}</div>
+                        <div class="comment-time">
+                            {{ c.created_at.strftime("%Y-%m-%d %H:%M") }}
+                        </div>
+                        <div class="comment-content">{{ c.content }}</div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="color:gray;">目前沒有留言。</p>
+            {% endif %}
+        </div>
+
     </div>
-
 </div>
+
+<script>
+function toggleLike(postId) {
+    fetch(`/api/posts/${postId}/like`, {
+        method: "POST"
+    })
+    .then(res => {
+        if (res.status === 401) {
+            alert("請先登入才能按讚");
+            throw new Error();
+        }
+        return res.json();
+    })
+    .then(data => {
+        document.getElementById("like-count").innerText = data.like_count;
+    });
+}
+</script>
 
 </body>
 </html>
